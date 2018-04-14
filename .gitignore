@@ -99,3 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# except ipython checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
