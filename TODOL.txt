@@ -5,9 +5,9 @@
 
 3. User, view는 seed를 만듦 (done)
 
-4. 얘네를 바탕으로 similar matrix를 만듦
+4. 얘네를 바탕으로 similar matrix를 만듦 (done)
 
-5. 추천
+5. 추천 (done)
 
 6. 추천잘했는지 안했는진 어떻게 측정할까..
 

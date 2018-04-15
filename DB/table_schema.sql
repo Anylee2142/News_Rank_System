@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS User (
-	user_id int auto_increment,
+	user_id int AUTO_INCREMENT,
     id varchar(100) UNIQUE,
     pw varchar(30),
     PRIMARY KEY (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS Article (
-	article_id int auto_increment,
+	article_id int AUTO_INCREMENT,
     title varchar(100),
     content MEDIUMTEXT,
     area int,
