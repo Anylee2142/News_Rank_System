@@ -3,13 +3,13 @@ import sys
 import urllib.request
 import json
 
-def api_search(keyword):
+def api_search(keyword, how_many):
     with open('../naver_api_info.txt', 'r') as f:
         client_id = str(f.readline().replace('\n',''))
         client_secret = str(f.readline().replace('\n',''))
 
     encText = urllib.parse.quote(keyword)
-    encDisp = urllib.parse.quote("100")
+    encDisp = urllib.parse.quote(str(how_many))
     url = "https://openapi.naver.com/v1/search/news?query={}&display={}".format(encText, encDisp)
     # url = "https://openapi.naver.com/v1/search/blog.xml?query=" + encText # xml 결과
     request = urllib.request.Request(url)
