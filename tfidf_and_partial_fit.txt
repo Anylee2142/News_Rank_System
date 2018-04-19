@@ -1,0 +1,9 @@
+주기적으로 뉴스를 크롤링해서 tfidf거친 data를 multinomialNB에 training시키려 한다.
+이 때 partial fit(online learning)하면 되지 않을까?
+> 안 됨.
+만약 크롤링한 데이터에 새로운 단어가 포함된다면
+기존의 데이터와 새로운 데이터의 tfidf한 feature가 달라진다.
+그러므로 학습할 수 없음
+
+** 데이터가 많아지면 tfidf벡터도 커지고 training시간도 길어질텐데 그럴 땐?
+> Random sampling
