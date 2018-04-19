@@ -103,3 +103,7 @@ ENV/
 # except ipython checkpoints
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+
+# except crawling, preprocess folder
+*/crawling/*
+*/preprocess/*
