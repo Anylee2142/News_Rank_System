@@ -1,0 +1,64 @@
+from flask import Flask, render_template, request, jsonify
+from modules.news_ranker import *
+
+import pandas as pd
+import numpy as np
+import MySQLdb as db
+
+app = Flask(__name__)
+
+conn = db.connect(
+"127.0.0.1",
+"root",
+'5555',
+"news_rec",
+charset='utf8')
+
+def init_server():
+    # Load model and genre matrix for server
+    model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
+
+    view = pd.read_sql('SELECT * FROM VIEW', conn)
+    view['count'] = 1
+    article = pd.read_sql('SELECT * FROM article', conn)
+    merged = pd.merge(view, article,left_on='article_id', right_on='article_id')
+    merged = merged.loc[:,['user_id','article_id','area','count']]
+    genre_matrix = merged.pivot_table(values='count',index='user_id',columns='area',aggfunc=np.sum)
+
+    return model, genre_matrix
+
+model, genre_matrix = init_server()
+
+@app.route('/test')
+def test():
+    return 'Server works just fine'
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/news_rank',methods=['POST'])
+def news_rank():
+    id = request.values.get('id')
+    pw = request.values.get('pw')
+    keyword = request.values.get('keyword')
+    how_many_pages = request.values.get('number_page')
+
+    # Find user_id from ID, PW
+    curs = conn.cursor()
+    curs.execute("SELECT user_id FROM user WHERE id='{}' AND pw='{}'".format(id,pw))
+    user_id = curs.fetchone()[0]
+
+    print(genre_matrix.loc[user_id])
+
+    # Ranking news from user_id
+    user_pref, ranked_news = news_rank_recommend(model, genre_matrix, user_id, keyword, how_many_pages )
+
+    # Handling for Disallowed key characters
+    ranked_news = [(each[0],each[1].replace('amp;','')) for each in ranked_news]
+
+    # Return ranked news
+    return render_template('news_rank.html',RANKED_NEWS=ranked_news, ID=id)
+
+if __name__=='__main__':
+    app.run(host='0.0.0.0')

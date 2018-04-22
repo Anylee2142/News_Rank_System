@@ -105,5 +105,5 @@ ENV/
 */.ipynb_checkpoints/*
 
 # except crawling, preprocess folder
-crawling/*
-preprocess/*
+workspace/crawling/*
+workspace/preprocess/*

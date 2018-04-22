@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>News rank</title>
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+
+    </head>
+    <body>
+
+    <h3>Your news ranker</h3>
+
+
+    <form action="/news_rank" method="POST">
+        아이디: <input type='text' name='id' size='10'><br>
+        비밀번호: <input type='password' name='pw' size='10'><br>
+        검색키워드: <input type="text" name="keyword" size="10"><br>
+        검색갯수(10 ~ 50):
+            <input type='number' name='number_page' min='10' max='50'>
+            <br>
+        <input type="submit" value="전송">
+    </form>
+
+
+    </body>
+</html>
