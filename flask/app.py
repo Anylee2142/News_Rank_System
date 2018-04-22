@@ -1,64 +1,64 @@
 from flask import Flask, render_template, request, jsonify
-
-from modules.crawling_to_db import *
-from modules.model_training import *
 from modules.news_ranker import *
 
 import pandas as pd
+import numpy as np
+import MySQLdb as db
 
 app = Flask(__name__)
 
-model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
+conn = db.connect(
+"127.0.0.1",
+"root",
+'5555',
+"news_rec",
+charset='utf8')
+
+def init_server():
+    # Load model and genre matrix for server
+    model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
+
+    view = pd.read_sql('SELECT * FROM VIEW', conn)
+    view['count'] = 1
+    article = pd.read_sql('SELECT * FROM article', conn)
+    merged = pd.merge(view, article,left_on='article_id', right_on='article_id')
+    merged = merged.loc[:,['user_id','article_id','area','count']]
+    genre_matrix = merged.pivot_table(values='count',index='user_id',columns='area',aggfunc=np.sum)
+
+    return model, genre_matrix
+
+model, genre_matrix = init_server()
 
 @app.route('/test')
-def wow():
+def test():
     return 'Server works just fine'
-
-@app.route('/post_test')
-def post_test():
-    return render_template('test.html')
-
-@app.route('/test1',methods=['POST'])
-def test1():
-    print(request.values.get('name'))
-    print(request.values.get('email'))
-    print(request.values.get('password'))
-
-    return render_template('test.html')
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/test2',methods=['GET'])
-def test2():
+@app.route('/news_rank',methods=['POST'])
+def news_rank():
     id = request.values.get('id')
     pw = request.values.get('pw')
-
     keyword = request.values.get('keyword')
     how_many_pages = request.values.get('number_page')
 
-    # Searching news with Naver API
-    raw = api_search(keyword, how_many_pages)['items']
-    searched = [(each['title'], each['link']) for each in raw]
-
     # Find user_id from ID, PW
+    curs = conn.cursor()
+    curs.execute("SELECT user_id FROM user WHERE id='{}' AND pw='{}'".format(id,pw))
+    user_id = curs.fetchone()[0]
+
+    print(genre_matrix.loc[user_id])
 
     # Ranking news from user_id
+    user_pref, ranked_news = news_rank_recommend(model, genre_matrix, user_id, keyword, how_many_pages )
+
+    # Handling for Disallowed key characters
+    ranked_news = [(each[0],each[1].replace('amp;','')) for each in ranked_news]
 
     # Return ranked news
-
-    return jsonify(searched)
-
-@app.route('/news_rank',methods=['GET'])
-def news_rank():
-
-    keyword = request.values.get('sentence')
-
-    print(request.values.get('sentence'))
-
-    return render_template('index_tmp.html')
-
+    return render_template('news_rank.html',RANKED_NEWS=ranked_news, ID=id)
 
 if __name__=='__main__':
     app.run(host='0.0.0.0')

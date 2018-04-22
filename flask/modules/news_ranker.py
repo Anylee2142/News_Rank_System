@@ -9,30 +9,30 @@ from sklearn.pipeline import Pipeline
 from konlpy.tag import Twitter
 from .naver_news_search import api_search
 
-def init_model():
-    return pickle.load(open('dataset/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
+# def init_model():
+#     return pickle.load(open('dataset/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
 
-def init_genre_matrix():
-    conn = db.connect(
-    "127.0.0.1",
-    "root",
-    '5555',
-    "news_rec",
-    charset='utf8',
-)
-
-    view = pd.read_sql('SELECT * FROM VIEW', conn)
-    view['count'] = 1
-    article = pd.read_sql('SELECT * FROM article', conn)
-
-    merged = pd.merge(view, article,left_on='article_id', right_on='article_id')
-    merged = merged.loc[:,['user_id','article_id','area','count']]
-
-    return merged.pivot_table(values='count',index='user_id',columns='area',aggfunc=np.sum)
+# def init_genre_matrix():
+#     conn = db.connect(
+#     "127.0.0.1",
+#     "root",
+#     '5555',
+#     "news_rec",
+#     charset='utf8',
+#     )
+#
+#     view = pd.read_sql('SELECT * FROM VIEW', conn)
+#     view['count'] = 1
+#     article = pd.read_sql('SELECT * FROM article', conn)
+#
+#     merged = pd.merge(view, article,left_on='article_id', right_on='article_id')
+#     merged = merged.loc[:,['user_id','article_id','area','count']]
+#
+#     return merged.pivot_table(values='count',index='user_id',columns='area',aggfunc=np.sum)
 
 # Classification Engine, gerne matrix are loaded once at first when this module imorted
 # model1 = init_model()
-genre_matrix = init_genre_matrix()
+# genre_matrix = init_genre_matrix()
 
 def go_get_article(crawling_list):
     import pandas as pd
@@ -41,6 +41,8 @@ def go_get_article(crawling_list):
     import requests
 
     article_list = []
+
+    print('Naver api search started !')
 
     for idx, val in enumerate(crawling_list):
         html = val
@@ -57,6 +59,8 @@ def go_get_article(crawling_list):
 
         if idx % 10 == 0:
             print('{} completed, {} total'.format(idx + 1, len(crawling_list)))
+
+    print('completed !')
 
     return article_list
 
@@ -88,7 +92,7 @@ def trimming(articles):
 def news_rank(user_id, genre_matrix, y_pred, y_prob):
     user_pref = genre_matrix.loc[user_id].sort_values(ascending=False).index
 
-    print(user_id,"'s preference list = ",user_pref, '\n')
+    print(user_id,"'s preference list = ",list(user_pref), '\n')
 
     article = []
 
@@ -111,13 +115,15 @@ def news_rank(user_id, genre_matrix, y_pred, y_prob):
         print(area, sorted_article[area])
 
     news_rank = []
+    area = ['정치','경제','사회','세계','생활문화','IT과학']
     for pref_area in user_pref:
         for each_article in sorted_article[pref_area]:
-            news_rank.append(each_article)
 
-    return news_rank
+            news_rank.append((area[pref_area], each_article))
 
-def news_rank_recommend(model1, user_id, keyword, how_many):
+    return list(user_pref), news_rank
+
+def news_rank_recommend(model1, genre_matrix, user_id, keyword, how_many):
 #     model1 = init_model()
 
     searched_news = api_search(keyword, how_many)['items']
@@ -135,6 +141,7 @@ def news_rank_recommend(model1, user_id, keyword, how_many):
     y_pred = model1.predict(X_test)
     y_prob = model1.predict_proba(X_test)
 
-    ranked_news = news_rank(user_id, genre_matrix, y_pred, y_prob)
+    user_pref, ranked_news = news_rank(user_id, genre_matrix, y_pred, y_prob)
 
-    return [(title_list[each] ,crawling_list[each]) for each in ranked_news]
+
+    return user_pref, [('[{}] {}'.format(str(each[0]), title_list[each[1]]) ,crawling_list[each[1]]+'\n') for each in ranked_news]

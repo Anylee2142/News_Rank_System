@@ -24,26 +24,26 @@ def fetch_all_data():
     td = datetime.now() - here
     minutes = td.seconds // 60 % 60
     print('Completed !', '{} min'.format(minutes),'{} sec'.format(td.seconds - minutes * 60))
-    
+
     return data
 
 def training_model(data):
-    # training model 
+    # training model
     here = datetime.now()
-    
+
     print('Model training started')
-    
+
     X = data.content
     y = data.area
-    
+
     # if test, uncomment belows
 #     X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=0)
-    
+
 #     X_train = X_train[:100]
 #     y_train = y_train[:100]
 #     X = X_train
 #     y = y_train
-    
+
     # alpha for multinomial nb is smoothing parameter
     model = Pipeline([
         ('vect', TfidfVectorizer(tokenizer=lambda x: ['/'.join(t) for t in Twitter().pos(x)])),
@@ -56,9 +56,9 @@ def training_model(data):
     return model
 
 def cross_validation(data, how_many_folds=3):
-    # Conduct cross validation 
+    # Conduct cross validation
     # returns lists of confusion matrix, classification report of each fold
-    
+
     cnf_mat = []
     clf_rep = []
 
@@ -90,24 +90,24 @@ def cross_validation(data, how_many_folds=3):
     total_td = datetime.now() - total_here
     minutes = total_td.seconds // 60 % 60
     print('Completed !', '{} min'.format(minutes),'{} sec'.format(total_td.seconds - minutes * 60))
-    
+
     return cnf_mat, clf_rep
 
 def save_model_and_cv_eval(model, cnf_mat, clf_rep, cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')):
     here = datetime.now()
-    
+
     print("Saving model and each fold's evaluation as confusion matrix, classification report")
-    
+
     cnf_mat = '\n\n'.join(cnf_mat)
     clf_rep = '\n\n'.join(clf_rep)
-    
+
     cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
     pickle.dump(model, open("model/twitter_tfidf_mulnb_{}.pkl".format(cur_time), "wb"))
     with open('model/twitter_tfidf_mulnb_cnf_mat_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
         f.write(str(cnf_mat))
     with open('model/twitter_tfidf_mulnb_clf_rep_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
         f.write(clf_rep)
-        
+
     td = datetime.now() - here
     minutes = td.seconds // 60 % 60
     print('Completed !', '{} min'.format(minutes),'{} sec'.format(td.seconds - minutes * 60))
@@ -116,7 +116,7 @@ if __name__=='__main__':
     data = fetch_all_data()
 
     model = training_model(data)
-    
+
     cnf_mat, clf_rep = cross_validation(data, 3)
-    
+
     save_model_and_cv_eval(model, cnf_mat, clf_rep)

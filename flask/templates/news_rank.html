@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>News rank</title>
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+
+    </head>
+    <body>
+
+    <h3>{{ID}}님을 위한 검색리스트</h3>
+    {% for each in RANKED_NEWS %}
+    <h4>{{each[0]}}</h4>
+    <a href="{{each[1]}}">{{each[1]}}</a><br /><br />
+    {%endfor%}
+
+
+    </body>
+</html>
