@@ -1,3 +1,3 @@
-Dnews_recnews_rec
+DROP TABLE view;
 DROP TABLE article;
 DROP TABLE user;
