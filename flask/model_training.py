@@ -113,6 +113,7 @@ def save_model_and_cv_eval(model, cnf_mat, clf_rep, cur_time = datetime.now().st
     print('Completed !', '{} min'.format(minutes),'{} sec'.format(td.seconds - minutes * 60))
 
 if __name__=='__main__':
+    # python model_training.py 
     data = fetch_all_data()
 
     model = training_model(data)

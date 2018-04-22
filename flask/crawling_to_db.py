@@ -27,14 +27,14 @@ def crawling(area,driver, count, cur_time):
         content = article_body.text
         file_name = '{}/{}-{}.txt'.format(area, count,
                                           posted_time.text.replace(':', '-'))
-        
+
         dest_path = '{}/{}/{}'.format('crawling',cur_time, file_name)
         with open(dest_path, 'w', encoding='UTF-8') as f:
             title = '\t'+title_list[idx] + '\n\n'
             f.write(title + content)
 
         count += 1
-    
+
     return count
 
 def get_page_buttons(driver):
@@ -77,9 +77,9 @@ def do_job(area, cur_time, how_many_pages = 20):
     options.add_argument('headless')
     options.add_argument("--disable-gpu")
     options.add_argument('log-level=3')
-    
+
     driver = webdriver.Chrome('chromedriver.exe', chrome_options=options)
-        
+
     count = 0
 
     for each in area:
@@ -91,12 +91,12 @@ def do_job(area, cur_time, how_many_pages = 20):
 
         count = how_many_pages_to_crawl(area_str, driver, cur_time, count ,how_many_pages)
         print('\t','counts of crawling = ',count)
-        
+
         count = 0
 
 def mk_dir(new_path):
     path = ['정치','경제','사회','세계','생활문화','IT과학']
-    
+
     if not pt.exists(new_path):
         mk(new_path)
         for area in path:
@@ -109,31 +109,31 @@ def trimming(file_name):
     import re
     with open(file_name,'r',encoding='utf8') as f:
         articles = f.readlines()
-    
+
     # 1.
     is_email = []
     for each in articles:
         tmp = re.findall('[^@]+@[^@]+\.[^@]+', each)
         is_email.append(tmp)
-    
+
     is_email = [True if len(each)!=0 else False for each in is_email]
     upper_bound = len(is_email) - 2 - is_email[::-1].index(True) if True in is_email else len(is_email)-1
-    
+
     articles = [articles[idx] if not is_email[idx] else '' for idx in range(0,upper_bound)]
-    
+
     # 2.
     for idx, val in enumerate(articles):
         converted = re.sub('[^가-힣0-9a-zA-Z.\\s]', ' ', val)
         articles[idx] = converted
-    
+
     # 3.
     articles = [each for each in articles if each != '']
-    
-    return articles  
+
+    return articles
 
 def raw_to_preprocessed(folder_name):
     path = ['정치','경제','사회','세계','생활문화','IT과학']
-    
+
     print('Preprocess Started')
     for each in path:
         crawling_path = '{}/{}/{}'.format('crawling',folder_name,each)
@@ -169,7 +169,7 @@ def load_whole_preprocessed(folder_name):
         return '-'.join(tmp[0].split('-')[1:]) + ' ' + tmp[1].replace('-',':')
 
     print('loading preprocessed started')
-    
+
     for each in path:
         preprocess_path = '{}/{}/{}'.format('preprocess',folder_name,each[0])
         file_names = [f for f in listdir(preprocess_path) if isfile(
@@ -197,9 +197,9 @@ def load_whole_preprocessed(folder_name):
 
         total_df = total_df.append(df)
         print('\t',each,' completed !')
-    
+
     print('loading preprocessed completed\n')
-        
+
     return total_df
 
 def preprocessed_to_db(data):
@@ -209,10 +209,10 @@ def preprocessed_to_db(data):
         '5555',
         'news_rec',
         charset='utf8')
-    
+
     print('Preprocessed to db started')
 
-    
+
     # article to DB
     curs = conn.cursor()
     for idx, val in data.iterrows():
@@ -239,7 +239,7 @@ def do_crawl(how_many_pages):
     area = [(politic, '정치'), (economy, '경제'), (society, '사회'),
             (culture, '생활문화'), (world, '세계'), (science, 'IT과학')]
 
-    
+
     p1 = Process(target=do_job, args=(area[:3],cur_time, how_many_pages))
     p1.start()
     p2 = Process(target=do_job, args=(area[3:],cur_time, how_many_pages))
@@ -250,17 +250,18 @@ def do_crawl(how_many_pages):
         if p1.exitcode != None and p2.exitcode != None:
             print('crawling completed !\n')
             break
-    
+
 if __name__ == '__main__':
+    # python crawling_to_db.py YOUR_PAGE_COUNTS
     cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
-    
+
     mk_dir('{}/{}'.format('crawling',cur_time))
-    
+
     how_many_pages = 20 if len(sys.argv)<=1 else int(sys.argv[1])
     do_crawl(how_many_pages)
-    
+
     mk_dir('{}/{}'.format('preprocess',cur_time))
-    
+
     raw_to_preprocessed(cur_time)
-    
+
     preprocessed_to_db(load_whole_preprocessed(cur_time))
