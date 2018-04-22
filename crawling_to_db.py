@@ -8,6 +8,7 @@ from os import listdir
 from os.path import isfile, join
 import time
 import MySQLdb as db
+import sys
 
 def crawling(area,driver, count, cur_time):
     articles = driver.find_element_by_css_selector('#section_body')
@@ -40,7 +41,7 @@ def get_page_buttons(driver):
     page_buttons = driver.find_elements_by_class_name('_paging')
     return [each.get_attribute('href') for each in page_buttons]
 
-def how_much_page_to_crawl(area, driver,cur_time, count, page_counts):
+def how_many_pages_to_crawl(area, driver,cur_time, count, page_counts):
     if page_counts == 0:
         print('Insert more than 0')
         return
@@ -71,10 +72,11 @@ def how_much_page_to_crawl(area, driver,cur_time, count, page_counts):
 
     return count
 
-def do_job(area, cur_time, how_many_page = 20):
+def do_job(area, cur_time, how_many_pages = 20):
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument("--disable-gpu")
+    options.add_argument('log-level=3')
     
     driver = webdriver.Chrome('chromedriver.exe', chrome_options=options)
         
@@ -87,7 +89,7 @@ def do_job(area, cur_time, how_many_page = 20):
         driver.get(area_link)
         print(area_str,' Crawling Started')
 
-        count = how_much_page_to_crawl(area_str, driver, cur_time, count ,how_many_page)
+        count = how_many_pages_to_crawl(area_str, driver, cur_time, count ,how_many_pages)
         print('\t','counts of crawling = ',count)
         
         count = 0
@@ -226,7 +228,7 @@ def preprocessed_to_db(data):
         conn.commit()
     print('Preprocessed to db completed')
 
-def do_crawl(how_much_page):
+def do_crawl(how_many_pages):
     politic = 'http://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=100'
     economy = 'http://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=101'
     society = 'http://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=102'
@@ -238,9 +240,9 @@ def do_crawl(how_much_page):
             (culture, '생활문화'), (world, '세계'), (science, 'IT과학')]
 
     
-    p1 = Process(target=do_job, args=(area[:1],cur_time, how_much_page))
+    p1 = Process(target=do_job, args=(area[:3],cur_time, how_many_pages))
     p1.start()
-    p2 = Process(target=do_job, args=(area[1:2],cur_time, how_much_page))
+    p2 = Process(target=do_job, args=(area[3:],cur_time, how_many_pages))
     p2.start()
 
     while True:
@@ -254,7 +256,8 @@ if __name__ == '__main__':
     
     mk_dir('{}/{}'.format('crawling',cur_time))
     
-    do_crawl(1)
+    how_many_pages = 20 if len(sys.argv)<=1 else int(sys.argv[1])
+    do_crawl(how_many_pages)
     
     mk_dir('{}/{}'.format('preprocess',cur_time))
     

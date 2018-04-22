@@ -22,4 +22,3 @@ CREATE TABLE IF NOT EXISTS view(
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (article_id) REFERENCES Article(article_id)
 );
-
