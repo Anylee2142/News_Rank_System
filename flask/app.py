@@ -5,6 +5,9 @@ import pandas as pd
 import numpy as np
 import MySQLdb as db
 
+app = Flask(__name__)
+
+
 def init_server(conn):
     # Load model and genre matrix for server
     model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
@@ -60,5 +63,4 @@ def news_rank():
     return render_template('news_rank.html',RANKED_NEWS=ranked_news, ID=id)
 
 if __name__=='__main__':
-    app = Flask(__name__)
     app.run(host='0.0.0.0')
