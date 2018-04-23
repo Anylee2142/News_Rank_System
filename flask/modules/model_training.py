@@ -45,7 +45,6 @@ def training_model(data):
 #     y = y_train
 
     # alpha for multinomial nb is smoothing parameter
-    print(Twitter())
     model = Pipeline([
         ('vect', TfidfVectorizer(tokenizer=lambda x: ['/'.join(t) for t in Twitter().pos(x)])),
         ('clf',MultinomialNB(alpha=0.01)),

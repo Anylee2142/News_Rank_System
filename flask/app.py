@@ -7,8 +7,14 @@ import MySQLdb as db
 
 app = Flask(__name__)
 
+conn = db.connect(
+"127.0.0.1",
+"root",
+'5555',
+"news_rec",
+charset='utf8')
 
-def init_server(conn):
+def init_server():
     # Load model and genre matrix for server
     model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
 
@@ -21,6 +27,8 @@ def init_server(conn):
 
     return model, genre_matrix
 
+model, genre_matrix = init_server()
+
 @app.route('/test')
 def test():
     return 'Server works just fine'
@@ -31,16 +39,6 @@ def home():
 
 @app.route('/news_rank',methods=['POST'])
 def news_rank():
-
-    conn = db.connect(
-    "127.0.0.1",
-    "root",
-    '5555',
-    "news_rec",
-    charset='utf8')
-
-    model, genre_matrix = init_server(conn)
-
     id = request.values.get('id')
     pw = request.values.get('pw')
     keyword = request.values.get('keyword')
