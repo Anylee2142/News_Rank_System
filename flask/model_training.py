@@ -1,14 +1,18 @@
 import MySQLdb as db
 import pandas as pd
 import numpy as np
-import dill as pickle
+import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
-from konlpy.tag import Twitter
+from konlpy.tag import Twitter as t
 from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from datetime import datetime
+
+def tagger(doc):
+    pos_tagger = t()
+    return ["/".join(t) for t in pos_tagger.pos(doc)]
 
 def fetch_all_data():
     # Reason why it fecthes all data from DB is that traing model with TFIDF cannot be applied with online learning
@@ -37,16 +41,16 @@ def training_model(data):
     y = data.area
 
     # if test, uncomment belows
-#     X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=0)
 
-#     X_train = X_train[:100]
-#     y_train = y_train[:100]
-#     X = X_train
-#     y = y_train
+    X_train = X_train[:10]
+    y_train = y_train[:10]
+    X = X_train
+    y = y_train
 
     # alpha for multinomial nb is smoothing parameter
     model = Pipeline([
-        ('vect', TfidfVectorizer(tokenizer=lambda x: ['/'.join(t) for t in Twitter().pos(x)])),
+        ('vect', TfidfVectorizer(tokenizer=tagger)),
         ('clf',MultinomialNB(alpha=0.01)),
     ]).fit(X, y)
     td = datetime.now() - here
@@ -69,12 +73,12 @@ def cross_validation(data, how_many_folds=3):
         here = datetime.now()
         X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=idx)
         clf = Pipeline([
-        ('vect', TfidfVectorizer(tokenizer=lambda x: ['/'.join(t) for t in Twitter().pos(x)])),
+        ('vect', TfidfVectorizer(tokenizer=tagger)),
         ('clf',MultinomialNB(alpha=0.01)),
         ])
 
         # if test, uncomment belows
-#         X_train, X_test, y_train, y_test = X_train[:100], X_test[:100], y_train[:100], y_test[:100]
+        X_train, X_test, y_train, y_test = X_train[:10], X_test[:10], y_train[:10], y_test[:10]
 
         model = clf.fit(X_train, y_train)
 
@@ -102,10 +106,10 @@ def save_model_and_cv_eval(model, cnf_mat, clf_rep, cur_time = datetime.now().st
     clf_rep = '\n\n'.join(clf_rep)
 
     cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
-    pickle.dump(model, open("model/twitter_tfidf_mulnb_{}.pkl".format(cur_time), "wb"))
-    with open('model/twitter_tfidf_mulnb_cnf_mat_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
+    pickle.dump(model, open("models/twitter_tfidf_mulnb_{}.pkl".format(cur_time), "wb"))
+    with open('models/twitter_tfidf_mulnb_cnf_mat_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
         f.write(str(cnf_mat))
-    with open('model/twitter_tfidf_mulnb_clf_rep_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
+    with open('models/twitter_tfidf_mulnb_clf_rep_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
         f.write(clf_rep)
 
     td = datetime.now() - here

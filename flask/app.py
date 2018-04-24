@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from modules.news_ranker import *
 
+# from konlpy.tag import Twitter as t
 import pandas as pd
 import numpy as np
 import MySQLdb as db
