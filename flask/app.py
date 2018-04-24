@@ -20,7 +20,12 @@ def init_server(conn):
 
     return model, genre_matrix
 
-model, genre_matrix = init_server()
+model, genre_matrix = init_server(db.connect(
+"127.0.0.1",
+"root",
+'5555',
+"news_rec",
+charset='utf8'))
 
 @app.route('/test')
 def test():
