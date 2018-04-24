@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
-from konlpy.tag import Twitter
+from konlpy.tag import Twitter as t
 from .naver_news_search import api_search
 
 # def init_model():

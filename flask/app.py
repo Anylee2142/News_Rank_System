@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from konlpy.tag import Twitter as t
 from modules.news_ranker import *
 
 # from konlpy.tag import Twitter as t
@@ -48,8 +49,6 @@ def news_rank():
     '5555',
     "news_rec",
     charset='utf8')
-
-    model, genre_matrix = init_server(conn)
 
     id = request.values.get('id')
     pw = request.values.get('pw')
