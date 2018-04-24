@@ -9,8 +9,9 @@ import pickle
 
 app = Flask(__name__)
 
-print(t)
-print(tagger)
+def tagger(doc):
+    pos_tagger = t()
+    return ["/".join(t) for t in pos_tagger.pos(doc)]
 
 def init_server(conn):
     model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-24 18-40-35.pkl','rb'))
