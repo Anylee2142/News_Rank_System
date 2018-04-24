@@ -1,21 +1,19 @@
 from flask import Flask, render_template, request, jsonify
-from konlpy.tag import Twitter as t
 from modules.news_ranker import *
 
 # from konlpy.tag import Twitter as t
 import pandas as pd
 import numpy as np
 import MySQLdb as db
+import pickle
 
 app = Flask(__name__)
 
-def tagger(doc):
-    pos_tagger = t()
-    return ["/".join(t) for t in pos_tagger.pos(doc)]
+print(t)
+print(tagger)
 
 def init_server(conn):
-    # Load model and genre matrix for server
-    model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
+    model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-24 18-40-35.pkl','rb'))
 
     view = pd.read_sql('SELECT * FROM VIEW', conn)
     view['count'] = 1

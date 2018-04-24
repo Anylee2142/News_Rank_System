@@ -10,6 +10,8 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.feature_extraction.text import TfidfVectorizer
 from datetime import datetime
 
+test_nbr = 100
+
 def tagger(doc):
     pos_tagger = t()
     return ["/".join(t) for t in pos_tagger.pos(doc)]
@@ -41,12 +43,12 @@ def training_model(data):
     y = data.area
 
     # if test, uncomment belows
-    X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=0)
-
-    X_train = X_train[:10]
-    y_train = y_train[:10]
-    X = X_train
-    y = y_train
+    # X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=0)
+    #
+    # X_train = X_train[:test_nbr]
+    # y_train = y_train[:test_nbr]
+    # X = X_train
+    # y = y_train
 
     # alpha for multinomial nb is smoothing parameter
     model = Pipeline([
@@ -78,7 +80,7 @@ def cross_validation(data, how_many_folds=3):
         ])
 
         # if test, uncomment belows
-        X_train, X_test, y_train, y_test = X_train[:10], X_test[:10], y_train[:10], y_test[:10]
+        # X_train, X_test, y_train, y_test = X_train[:test_nbr], X_test[:test_nbr], y_train[:test_nbr], y_test[:test_nbr]
 
         model = clf.fit(X_train, y_train)
 

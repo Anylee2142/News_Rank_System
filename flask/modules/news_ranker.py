@@ -1,13 +1,14 @@
-import MySQLdb as db
 import pandas as pd
 import numpy as np
-import pickle
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from konlpy.tag import Twitter as t
 from .naver_news_search import api_search
+
+def tagger(doc):
+    pos_tagger = t()
+    return ["/".join(t) for t in pos_tagger.pos(doc)]
 
 # def init_model():
 #     return pickle.load(open('dataset/twitter_tfidf_mulnb_2018-04-22 20-17-55.pkl','rb'))
