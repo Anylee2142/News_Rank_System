@@ -9,9 +9,9 @@ import pickle
 
 app = Flask(__name__)
 
-def tagger(doc):
-    pos_tagger = t()
-    return ["/".join(t) for t in pos_tagger.pos(doc)]
+# def tagger(doc):
+#     pos_tagger = t()
+#     return ["/".join(t) for t in pos_tagger.pos(doc)]
 
 def init_server(conn):
     model = pickle.load(open('models/twitter_tfidf_mulnb_2018-04-24 18-40-35.pkl','rb'))
@@ -71,4 +71,8 @@ def news_rank():
     return render_template('news_rank.html',RANKED_NEWS=ranked_news, ID=id)
 
 if __name__=='__main__':
+    def tagger(doc):
+        pos_tagger = t()
+        return ["/".join(t) for t in pos_tagger.pos(doc)]
+
     app.run(host='0.0.0.0')
