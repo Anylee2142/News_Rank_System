@@ -4,7 +4,7 @@ import urllib.request
 import json
 
 def api_search(keyword, how_many):
-    with open('../../../naver_api_info.txt', 'r') as f:
+    with open('/home/ej/github/naver_api_info.txt', 'r') as f:
         client_id = str(f.readline().replace('\n',''))
         client_secret = str(f.readline().replace('\n',''))
 

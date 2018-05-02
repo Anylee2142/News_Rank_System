@@ -203,12 +203,19 @@ def load_whole_preprocessed(folder_name):
     return total_df
 
 def preprocessed_to_db(data):
+    
+    import json
+
+    with open('/home/ej/github/news_config.json') as f:
+        config = json.load(f)
+
     conn = db.connect(
-        '127.0.0.1',
-        'root',
-        '5555',
-        'news_rec',
-        charset='utf8')
+        config['ADDR'],
+        config['ID'],
+        config['PW'],
+        config['DB'],
+        charset='utf8'
+    )
 
     print('Preprocessed to db started')
 

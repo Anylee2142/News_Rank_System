@@ -20,12 +20,18 @@ def fetch_all_data():
     # Reason why it fecthes all data from DB is that traing model with TFIDF cannot be applied with online learning
     here = datetime.now()
     print('Loading data from DB')
+    
+    import json
+
+    with open('/home/ej/github/news_config.json') as f:
+        config = json.load(f)
+    
     data = pd.read_sql('SELECT * FROM ARTICLE;', db.connect(
-        "127.0.0.1",
-        "root",
-        '5555',
-        "news_rec",
-        charset='utf8',
+        config['ADDR'],
+        config['ID'],
+        config['PW'],
+        config['DB'],
+        charset='utf8'
     ))
     td = datetime.now() - here
     minutes = td.seconds // 60 % 60
