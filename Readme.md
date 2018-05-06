@@ -7,6 +7,7 @@
 > #### 2. News Rank
 > #### 3. AWS with Flask
 
+
 ## Data Collection + Model Training
 
 <img src='img/news_rec.png'>
