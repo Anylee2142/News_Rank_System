@@ -2,22 +2,20 @@
 > ### Provide list of seached news based on user's preference
 
 - **Tools**
-  - Selenium
+  - Selenium, Naver API
   - Scikit-learn, KoNLPy
   - Flask, AWS
   - MySQL
-  
-- How it works
-  - 0. Data Collection
-  - 1. Model Training
-  - 2. News Rank
-  - 3. AWS with Flask
 
+  
 ## Data Collection + Model Training
 
 <img src='img/news_rec.png'>
 
------------------
+## News Rank
+
+<img src='img/news_rank.png'>
+
 
 ## 뉴스검색 + 뉴스랭크
 > #### 0. 유저로부터 웹에서 키워드를 입력받음	
