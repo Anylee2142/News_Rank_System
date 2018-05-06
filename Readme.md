@@ -1,19 +1,17 @@
 # News Rank system with NLP classification
-> Provide list of seached news based on user's preference
+> ### Provide list of seached news based on user's preference
 
 - **Tools**
   - Selenium
   - Scikit-learn, KoNLPy
   - Flask, AWS
   - MySQL
-  - Faker for Seed data
-
-## How it works
-> #### 0. Data Collection
-> #### 1. Model Training
-> #### 2. News Rank
-> #### 3. AWS with Flask
-
+  
+- How it works
+  - 0. Data Collection
+  - 1. Model Training
+  - 2. News Rank
+  - 3. AWS with Flask
 
 ## Data Collection + Model Training
 
