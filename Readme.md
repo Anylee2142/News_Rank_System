@@ -3,7 +3,9 @@
 
 - What i did
 	> Data Collection + Model Training
+	
 	> News Rank
+	
 	> Associate with Flask + AWS
 
 - **Tools**
