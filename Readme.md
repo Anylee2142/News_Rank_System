@@ -2,28 +2,16 @@
 > 유저가 특정 키워드로 뉴스검색 시 자주 보던 분야 순으로 검색결과 제공
 
 ## How it works
-> #### 0. 데이터 수집
-> #### 1. 모델훈련
-> #### 2. 뉴스검색 + 뉴스랭크
-> #### 3. AWS, flask와 연동
+> #### 0. Data Collection
+> #### 1. Model Training
+> #### 2. News Rank
+> #### 3. AWS with Flask
+
+## Data Collection + Model Training
 
 <img src='img/news_rec.png'>
 
 -----------------
-
-## 데이터 수집
-> #### 0. X = TF-IDF된 뉴스, y = 뉴스분야 (정치, 세계, etc..)
-> #### 1. training set = 네이버 뉴스 (셀레니움 크롤링)
-> #### 2. test set = training set보다 최신의 네이버 뉴스 (셀레니움 크롤링)
-> #### 3. 크롤링한 뉴스에 대해 전처리 (기자 이메일, 각종 광고문구 제거 etc)
-> #### 4. 전처리된 뉴스들을 MySQL에 저장
-
-## 모델훈련
-> #### 0. DB에서 뉴스 불러옴
-> #### 1. Multinomial Naive Bayes + TF-IDF + Twitter tagger로 훈련
-> #### 2. CV 수행하여 confusion matrix, clf report로 overfitting됬는지 확인하고 결과저장
-> #### 3. test set을 이용하여 performance check
-> #### 4. 훈련된 모델 pickle로 저장
 
 ## 뉴스검색 + 뉴스랭크
 > #### 0. 유저로부터 웹에서 키워드를 입력받음	
