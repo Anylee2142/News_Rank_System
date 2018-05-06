@@ -2,11 +2,9 @@
 > ### Provide list of seached news based on user's preference
 
 - What i did
-	> Data Collection + Model Training
-	
-	> News Rank
-	
-	> Associate with Flask + AWS
+	> ### Data Collection + Model Training
+	> ### News Rank
+	> ### Associate with Flask + AWS
 
 - **Tools**
   - Selenium, Naver API
