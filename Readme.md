@@ -1,6 +1,13 @@
 # 자연어처리 분류모델을 이용한 뉴스랭크 시스템
 > 유저가 특정 키워드로 뉴스검색 시 자주 보던 분야 순으로 검색결과 제공
 
+- **Tools**
+  - Selenium
+  - Scikit-learn, KoNLPy
+  - Flask, AWS
+  - MySQL
+  - Faker for Seed data
+
 ## How it works
 > #### 0. Data Collection
 > #### 1. Model Training
