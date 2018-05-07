@@ -1,5 +1,5 @@
 # News Rank system with NLP classification
-> ### Provide list of seached news based on user's preference
+> ### Provide sorted list of seached news based on user's preference
 
 - What i did
 	> ### Data Collection + Model Training
@@ -18,6 +18,7 @@
 <img src='img/news_rec.png'>
 
 ## News Rank
+> ### Provide sorted list of news based on user's preference
 
 <img src='img/news_rank.PNG'>
 
