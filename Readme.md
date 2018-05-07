@@ -26,7 +26,7 @@
 
 <img src='img/news_aws.PNG'>
 
-## Performance
+## Performance (3-Fold CV)
 
 |           	| precision 	| recall 	| F1-Score 	| support 	|
 |:---------:	|-----------	|--------	|----------	|---------	|
