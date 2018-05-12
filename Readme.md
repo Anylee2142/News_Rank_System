@@ -13,7 +13,7 @@
   - MySQL
 
   
-## Data Collection + Model Training
+## Data Collection + Model Training 
 
 <img src='img/news_rec.png'>
 
