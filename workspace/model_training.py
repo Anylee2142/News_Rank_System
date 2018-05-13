@@ -27,14 +27,11 @@ def fetch_all_data():
     
     return data
 
-def training_model(data):
+def training_model(X, y):
     # training model 
     here = datetime.now()
     
     print('Model training started')
-    
-    X = data.content
-    y = data.area
     
     # if test, uncomment belows
 #     X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=0)
@@ -55,7 +52,7 @@ def training_model(data):
 
     return model
 
-def cross_validation(data, how_many_folds=3):
+def cross_validation(X,y, how_many_folds=3):
     # Conduct cross validation 
     # returns lists of confusion matrix, classification report of each fold
     
@@ -67,7 +64,7 @@ def cross_validation(data, how_many_folds=3):
     print('Cross validaiton started !')
     for idx in range(0,how_many_folds):
         here = datetime.now()
-        X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.3, random_state=idx)
+        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3, random_state=idx)
         clf = Pipeline([
         ('vect', TfidfVectorizer(tokenizer=lambda x: ['/'.join(t) for t in Twitter().pos(x)])),
         ('clf',MultinomialNB(alpha=0.01)),
@@ -93,7 +90,7 @@ def cross_validation(data, how_many_folds=3):
     
     return cnf_mat, clf_rep
 
-def save_model_and_cv_eval(model, cnf_mat, clf_rep, cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')):
+def save_model_and_cv_eval(model, X_test, y_test, cnf_mat, clf_rep, cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')):
     here = datetime.now()
     
     print("Saving model and each fold's evaluation as confusion matrix, classification report")
@@ -101,12 +98,18 @@ def save_model_and_cv_eval(model, cnf_mat, clf_rep, cur_time = datetime.now().st
     cnf_mat = '\n\n'.join(cnf_mat)
     clf_rep = '\n\n'.join(clf_rep)
     
+    y_pred = model.predict(X_test)
+    test_performance = classification_report(y_test, y_pred)
+    
     cur_time = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
     pickle.dump(model, open("model/twitter_tfidf_mulnb_{}.pkl".format(cur_time), "wb"))
     with open('model/twitter_tfidf_mulnb_cnf_mat_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
         f.write(str(cnf_mat))
     with open('model/twitter_tfidf_mulnb_clf_rep_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
         f.write(clf_rep)
+    with open('model/twitter_tfidf_mulnb_test_clf_rep_{}.txt'.format(cur_time),'w',encoding='utf-8') as f:
+        f.write(test_performance)
+        
         
     td = datetime.now() - here
     minutes = td.seconds // 60 % 60
@@ -115,8 +118,12 @@ def save_model_and_cv_eval(model, cnf_mat, clf_rep, cur_time = datetime.now().st
 if __name__=='__main__':
     data = fetch_all_data()
 
-    model = training_model(data)
+    X_train, X_test, y_train, y_test = train_test_split(data.content, data.area, test_size=0.2, random_state=0)
     
-    cnf_mat, clf_rep = cross_validation(data, 3)
+    model = training_model(X_train, y_train)
     
-    save_model_and_cv_eval(model, cnf_mat, clf_rep)
+    cnf_mat, clf_rep = cross_validation(X_train, y_train, 3)
+    
+    save_model_and_cv_eval(model, X_test, y_test, cnf_mat, clf_rep)
+    
+    
