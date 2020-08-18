@@ -3,7 +3,7 @@
 
 - What i did
 	> ### Data Collection + Model Training
-	> ### News Rank
+	> ### News Rank (Training news data to classify future news, and sort them as user preferences)
 	> ### Associate with Flask + AWS
 
 - **Tools**
